@@ -58,6 +58,7 @@ impl<T> FixedArray<T> {
                 size, index
             ));
         }
+        self.check_capacity()?;
         self.items.insert(index, element);
         Ok(())
     }
@@ -109,6 +110,10 @@ impl<T> FixedArray<T> {
 
     pub fn get_capacity(&self) -> usize {
         self.capacity
+    }
+
+    pub fn get_elements(&self) -> &Vec<T> {
+        &self.items
     }
 }
 
@@ -221,5 +226,9 @@ impl<T: Clone> DynamicArray<T> {
 
     pub fn get_capacity(&self) -> usize {
         self.items.capacity()
+    }
+
+    pub fn get_elements(&self) -> &Vec<T> {
+        &self.items
     }
 }

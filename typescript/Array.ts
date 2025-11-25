@@ -19,7 +19,7 @@ class FixedArray<T> {
 
     private checkCapacity() {
         if (this.size >= this.capacity) {
-            throw new Error('Fixed Array is full.Cannot add more elements');
+            throw new Error('Fixed Array is full.Cannot add more elements.');
         }
     }
 
@@ -49,9 +49,9 @@ class FixedArray<T> {
                 `Insertion index is out of bounds. Valid range: 0 to ${this.size}. Requested: ${index}`
             );
         }
-        this.checkIndex(index);
+        this.checkCapacity();
         // 从index开始往后移动一位
-        for (let i = this.size - 2; i > index; i--) {
+        for (let i = this.size - 1; i >= index; i--) {
             this.items[i + 1] = this.items[i];
         }
         this.items[index] = element;
@@ -81,7 +81,7 @@ class FixedArray<T> {
 
     public get(index: number) {
         this.checkIndex(index);
-        return this.items[index];
+        return this.items[index] as (undefined | T);
     }
 
     public set(index: number, element: T) {
@@ -90,11 +90,11 @@ class FixedArray<T> {
     }
 
     public getFirst() {
-        return this.get(0);
+        return this.get(0) as (undefined | T);
     }
 
     public getLast() {
-        return this.get(this.size - 1);
+        return this.get(this.size - 1) as (undefined | T);
     }
 
     public sort(comparator?: (a: T, b: T) => number) {
@@ -134,6 +134,10 @@ class FixedArray<T> {
 
     public getSize() {
         return this.size;
+    }
+
+    public getCapacity(){
+        return this.capacity;
     }
 
     public getElements(){
@@ -300,3 +304,13 @@ class DynamicArray<T> {
         return `[Size: ${this.size}, ${this.toArray().join()}]`
     }
 }
+
+const fixedArray = new FixedArray(10);
+for (let i = 0; i < 8; i++) {
+    fixedArray.append(i);
+}
+console.log(fixedArray.toString());
+fixedArray.addAt(3, 11);
+console.log(fixedArray.toString());
+fixedArray.remove(3);
+console.log(fixedArray.toString());
