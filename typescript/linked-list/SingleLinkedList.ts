@@ -27,6 +27,7 @@ export class SingleLinkedList<T> {
 
     public insertAtHead(data: T) {
         const node = new SingleLinkedNode(data, this.head);
+        node.next = this.head;
         this.head = node;
         this.size++;
     }

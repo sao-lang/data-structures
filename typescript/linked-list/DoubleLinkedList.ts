@@ -138,6 +138,7 @@ export class DoubleLinkedList<T> {
                 this.size--;
                 return current.data;
             }
+            current = current.next;
         }
         return null;
     }

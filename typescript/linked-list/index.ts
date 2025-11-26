@@ -2,13 +2,14 @@ import { DoubleLinkedList } from "./DoubleLinkedList";
 import { SingleLinkedList } from "./SingleLinkedList";
 
 
-// const singleLinkedList = new SingleLinkedList();
-// for (let i = 0; i < 10; i++) {
-//     singleLinkedList.insertAtTail(i);
-// }
-// singleLinkedList.display();
-// singleLinkedList.delete(0);
-// singleLinkedList.display();
+const singleLinkedList = new SingleLinkedList();
+for (let i = 0; i < 10; i++) {
+    singleLinkedList.insertAtTail(i);
+}
+console.log(123);
+singleLinkedList.display();
+singleLinkedList.delete(0);
+singleLinkedList.display();
 
 
 
