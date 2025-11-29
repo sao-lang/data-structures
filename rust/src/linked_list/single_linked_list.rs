@@ -91,27 +91,27 @@ impl<T> SingleLinkedList<T> {
         if self.head.as_ref().unwrap().data == data {
             return self.delete_at_head();
         }
-        let mut current = self.head.as_mut().unwrap();
+        let mut current = self.head.as_mut();
         // loop {
-        //     match current.next {
-        //         Some(ref mut node) => {
+        //     match current {
+        //         Some(node) => {
         //             if node.data == data {
         //                 self.size -= 1;
         //                 return Some(data);
         //             }
-        //             current = node;
+        //             current = node.next.as_mut();
         //         },
         //         None => {
         //             return None;
         //         }
         //     }
         // }
-        while let Some(ref mut node) = current.next {
+        while let Some(node) = current {
             if node.data == data {
                 self.size -= 1;
                 return Some(data);
             }
-            current = node;
+            current = node.next.as_mut();
         }
         return None;
     }
@@ -123,30 +123,30 @@ impl<T> SingleLinkedList<T> {
         if self.is_empty() {
             return None;
         }
-        let mut current = self.head.as_mut().unwrap();
+        let mut current = self.head.as_mut();
         let mut index = 0;
-        // while let Some(ref mut node) = current.next {
-        //     if node.data == data {
-        //         return Some(index);
-        //     }
-        //     current = node;
-        //     index += 1;
-        // }
-        // None
-        loop {
-            match current.next {
-                None => {
-                    return None;
-                }
-                Some(ref mut node) if node.data == data => {
-                    return Some(index);
-                }
-                Some(ref mut node) => {
-                    current = node;
-                    index += 1;
-                }
+        while let Some(node) = current {
+            if node.data == data {
+                return Some(index);
             }
+            current = node.next.as_mut();
+            index += 1;
         }
+        None
+        // loop {
+        //     match current {
+        //         None => {
+        //             return None;
+        //         }
+        //         Some(node) if node.data == data => {
+        //             return Some(index);
+        //         }
+        //         Some(node) => {
+        //             current = node.next.as_mut();
+        //             index += 1;
+        //         }
+        //     }
+        // }
     }
 
     pub fn display(&mut self)
