@@ -2,6 +2,7 @@
 
 use std::{
     cell::RefCell,
+    fmt::Debug,
     rc::{Rc, Weak},
 };
 type DoubleLinked<T> = Option<Rc<RefCell<DoubleLinkedNode<T>>>>;
@@ -131,36 +132,130 @@ impl<T> DoubleLinkedList<T> {
         if self.is_empty() {
             return None;
         }
-        // let mut current = self.head.clone();
-        // let mut index = 0;
-        // loop {
-        //     let node_rc = match current.take() {
-        //         None => {
-        //             return None;
-        //         },
-        //         Some(node) => node,
-        //     };
-        //     if node_rc.borrow().data == data {
-        //         return Some(index);
-        //     }
-        //     current = node_rc.borrow_mut().next.clone();
-        //     index += 1;
-        // }
-        let mut current = self.head.as_ref().unwrap().clone();
+        let mut current = self.head.clone();
         let mut index = 0;
         loop {
-            match Some(&mut current) {
+            let node_rc = match current.take() {
                 None => {
                     return None;
-                },
-                Some(node) => {
-                    if node.borrow().data == data {
-                        return Some(index);
-                    }
-                    current = node.clone();
-                    index += 1;
                 }
+                Some(node) => node,
+            };
+            if node_rc.borrow().data == data {
+                return Some(index);
             }
+            current = node_rc.borrow_mut().next.clone();
+            index += 1;
         }
     }
+
+    pub fn display_forward(&self)
+    where
+        T: Debug,
+    {
+        let mut current = self.head.clone();
+        let mut result = String::new();
+        while let Some(node) = current {
+            result.push_str(format!("{:?}", node.borrow().data).as_str());
+            if node.borrow().next.is_some() {
+                result.push_str(format!("{:?}", "<=>").as_str());
+            }
+            current = node.borrow().next.clone();
+        }
+        print!("{:?}", result);
+    }
+
+    pub fn display_back(&self)
+    where
+        T: Debug,
+    {
+        let mut current = self.tail.clone();
+        let mut result = String::new();
+        while let Some(node) = current {
+            result.push_str(format!("{:?}", node.borrow().data).as_str());
+            if node.borrow().prev.is_some() {
+                result.push_str(format!("{:?}", "<=>").as_str());
+            }
+            current = match node.borrow().prev.clone() {
+                None => None,
+                // 这里是将弱引用升级，返回一个新的强引用
+                Some(weak) => weak.upgrade(),
+            };
+        }
+        print!("{:?}", result);
+    }
 }
+
+// 迭代器的实现，Iterator是让当前结构可以遍历自身的元素，IntoIterator是让当前的结构变成一个集合，用于for循环遍历
+
+// impl<'a, T> Iterator for DoubleLinked<'a, T>
+// where
+//     // 约束：要求数据 T 的生命周期至少和迭代器一样长
+//     T: 'a,
+// {
+//     // 关联类型：定义每次迭代返回的元素类型
+//     type Item = &'a T;
+
+//     /// 核心方法：返回下一个元素，并将指针向前移动一位
+//     fn next(&mut self) -> Option<Self::Item> {
+//         // 1. 使用 self.next.take() 消耗 Option，获取当前节点 Rc 的引用
+//         self.next.take().map(|node_rc| {
+
+//             // node_rc 是 &'a Rc<RefCell<DoubleLinkedNode<T>>>
+
+//             // 2. 更新 self.next 到下一个节点的引用
+//             //    node_rc.borrow() 创建一个临时的 Ref 借用，我们从中安全地获取 next 字段的引用。
+//             //    这个引用 &'a Rc<...> 的生命周期是绑定到 node_rc (即链表节点) 上的，而不是临时的 Ref。
+//             self.next = node_rc.borrow().next.as_ref();
+
+//             // 3. 返回当前节点数据的引用
+//             //    &node_rc.borrow().data 返回 &'a T，这是安全的，因为它借用了链表节点内部的数据。
+//             &node_rc.borrow().data
+//         })
+//     }
+// }
+
+// // 为不可变引用 (&'a DoubleLinkedList<T>) 实现 IntoIterator
+// impl<'a, T> IntoIterator for &'a DoubleLinkedList<T> {
+//     // 关联类型：定义这个迭代器返回的实际类型
+//     type Item = &'a T;
+
+//     // 关联类型：定义返回的迭代器类型
+//     type IntoIter = DoubleLinked<'a, T>;
+
+//     /// 核心方法：将集合转换为迭代器
+//     fn into_iter(self) -> Self::IntoIter {
+//         DoubleLinked {
+//             // 返回迭代器，初始指向链表的 head 节点
+//             next: self.head.as_ref(), // 使用 as_ref() 避免 clone()
+//         }
+//     }
+// }
+
+// // 假设您已经创建并填充了链表
+// // let list: DoubleLinkedList<i32> = ...;
+
+// // 1. 使用 for 循环 (最推荐)
+// // for x 会是 &i32 类型
+// for x in &list {
+//     println!("元素: {}", x);
+// }
+
+// // 2. 使用迭代器方法 (例如：求和)
+// let sum: i32 = list.iter().sum(); // 自动获得了 sum() 方法
+
+// // 3. 像您之前的问题一样，实现 display_forward
+// pub fn display_forward_final(&self)
+// where
+//     T: Debug,
+// {
+//     let result = self
+//         .iter() // 调用我们实现的迭代器
+//         .map(|data_ref| format!("{:?}", data_ref))
+//         .collect::<Vec<String>>()
+//         .join(" <=> ");
+
+//     println!("{}", result);
+// }
+
+// 其他还有Debug Copy Clone Eq PartialEq，都可以进行实现
