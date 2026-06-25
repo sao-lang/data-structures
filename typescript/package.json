@@ -1,0 +1,16 @@
+{
+  "name": "data-strcutures",
+  "version": "1.0.0",
+  "description": "基本包括：固定数组  动态数组 单向链表  双向链表 单向循环链表  双向循环链表  栈 队列 循环队列 双端队列  哈希表 Trie(字典树) 二叉树 二叉搜索树 AVL树 最小堆 最大堆 图 BFS/DFS遍历 并查集 跳表 红黑树(Red-Black Tree) 线段树 树状数组(Fenwick Tree) 布隆过滤器(Bloom Filter) LRU缓存 后缀数组 KD树",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
